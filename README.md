@@ -88,3 +88,5 @@ rm $KEYSTORE_SIGNED_CERT
 
 Secure Kafka 환경구성은 다음을 참고하세요.  
 [Securing Apache Kafka Cluster using SSL, SASL and ACL](https://medium.com/egen/securing-kafka-cluster-using-sasl-acl-and-ssl-dec15b439f9d)
+
+[Secure Kafka Cluster](https://blogs.oracle.com/datawarehousing/post/secure-kafka-cluster)
