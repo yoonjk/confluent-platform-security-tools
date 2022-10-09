@@ -1,14 +1,14 @@
 Confluent Platform Security Tools
 =================================
 
-This repo contains a tool that generates Kafka keystores and trust stores, along with a diagram that explains how keystores and trust stores can be deployed in Kafka.
+이 리포지토리에는 Kafka 키 저장소(keystore) 및 신뢰 저장소(truststore)를 생성하는 도구와 함께 키 저장소 및 신뢰 저장소를 Kafka에 배포하는 방법을 설명하는 다이어그램이 포함되어 있습니다.
 
-Both the diagram and the script store the CA in the trust store. The trust store can be configured in other ways, for example, with multiple CAs, or with certificates instead of CAs. However, at this time, the diagram and the script don't address these additional configurations.
+여러 CA 또는 CA 대신 인증서를 사용하여 신뢰 저장소를 다른 방식으로 구성할 수 있습니다. 그러나 현재 스크립트는 이러한 추가 구성을 다루지 않습니다.
 
 ## User-input vs. Scripted Installation
 
-- `kafka-generate-ssl.sh` - asks for user input
-- `kafka-generate-ssl-automatic.sh` - scripted installation, requires these environment variables to be set (example):
+- `kafka-generate-ssl.sh` - 사용자 입력을 요청합니다
+- `kafka-generate-ssl-automatic.sh` - 스크립트를 실행전, 다음의 환경 변수를 설정해야 함 (example):
   - `COUNTRY`
   - `STATE`
   - `ORGANIZATION_UNIT`
