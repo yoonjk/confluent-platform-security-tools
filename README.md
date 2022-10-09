@@ -24,3 +24,21 @@ export CITY=Chicago
 export PASSWORD=secret
 bash ./kafka-generate-ssl-automatic.sh
 ```
+```
+KEYSTORE_FILENAME="kafka.keystore.jks"
+VALIDITY_IN_DAYS=3650
+DEFAULT_TRUSTSTORE_FILENAME="kafka.truststore.jks"
+TRUSTSTORE_WORKING_DIRECTORY="truststore"
+KEYSTORE_WORKING_DIRECTORY="keystore"
+CA_CERT_FILE="ca-cert"
+KEYSTORE_SIGN_REQUEST="cert-file"
+KEYSTORE_SIGN_REQUEST_SRL="ca-cert.srl"
+KEYSTORE_SIGNED_CERT="cert-signed"
+
+COUNTRY=$COUNTRY
+STATE=$STATE
+OU=$ORGANIZATION_UNIT
+CN=`hostname -f`
+LOCATION=$CITY
+PASS=$PASSWORD
+```
