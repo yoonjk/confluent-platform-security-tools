@@ -1,5 +1,5 @@
-Confluent Platform Security Tools
-=================================
+Secure Kafka Cluster 구성을 위한 인증서 작성 순서
+==========================================
 
 이 리포지토리에는 Kafka 키 저장소(keystore) 및 신뢰 저장소(truststore)를 생성하는 도구와 함께 키 저장소 및 신뢰 저장소를 Kafka에 배포하는 방법을 설명하는 다이어그램이 포함되어 있습니다.
 
