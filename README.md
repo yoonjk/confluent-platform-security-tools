@@ -35,3 +35,14 @@ bash ./kafka-generate-ssl-automatic.sh
     -out $TRUSTSTORE_WORKING_DIRECTORY/ca-cert -days $VALIDITY_IN_DAYS -nodes \
     -subj "/C=$COUNTRY/ST=$STATE/L=$LOCATION/O=$OU/CN=$CN"
 ```
+
+2. CA 인증서를 truststore에 반입
+```
+  echo "이제 truststore를 생성하고, 인증서(CA public 인증서)를  반입(import)."
+  echo
+
+  keytool -keystore $TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME \
+    -alias CARoot -import -file $TRUSTSTORE_WORKING_DIRECTORY/ca-cert \
+    -noprompt -dname "C=$COUNTRY, ST=$STATE, L=$LOCATION, O=$OU, CN=$CN" -keypass $PASS -storepass $PASS
+```
+
