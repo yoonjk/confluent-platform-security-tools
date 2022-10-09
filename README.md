@@ -32,7 +32,11 @@ openssl req -new -x509 -keyout $TRUSTSTORE_WORKING_DIRECTORY/ca-key \
 -subj "/C=$COUNTRY/ST=$STATE/L=$LOCATION/O=$OU/CN=$CN"
 ```
 
-2. CA 인증서를 truststore에 반입
+2. CA 인증서를 truststore에 반입 
+1번에서 생성한 Root CA 인증서(한번만 수행)를 각 서버의 작업폴더에 복사하고,
+스크립트에서 필요한 환경변수를 설정하고
+아래 2~10까지를 각 서버의 작업폴더에서 실행합니다.
+
 ```
 keytool -keystore $TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME \
 -alias CARoot -import -file $TRUSTSTORE_WORKING_DIRECTORY/ca-cert \
