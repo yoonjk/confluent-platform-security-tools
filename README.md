@@ -22,41 +22,31 @@ export STATE=IL
 export ORGANIZATION_UNIT=SE
 export CITY=Chicago
 export PASSWORD=secret
+
 bash ./kafka-generate-ssl-automatic.sh
 ```
 1. CA 인증서 생성
 ```
-  echo "OK, trust store 생성하고, root CA 개인키/공개키 생성."
-  echo
-  echo "첫번째 개인키(private)/공개키(pub) 생성."
-  echo
-
-  openssl req -new -x509 -keyout $TRUSTSTORE_WORKING_DIRECTORY/ca-key \
-    -out $TRUSTSTORE_WORKING_DIRECTORY/ca-cert -days $VALIDITY_IN_DAYS -nodes \
-    -subj "/C=$COUNTRY/ST=$STATE/L=$LOCATION/O=$OU/CN=$CN"
+openssl req -new -x509 -keyout $TRUSTSTORE_WORKING_DIRECTORY/ca-key \
+-out $TRUSTSTORE_WORKING_DIRECTORY/ca-cert -days $VALIDITY_IN_DAYS -nodes \
+-subj "/C=$COUNTRY/ST=$STATE/L=$LOCATION/O=$OU/CN=$CN"
 ```
 
 2. CA 인증서를 truststore에 반입
 ```
-  echo "이제 truststore를 생성하고, 인증서(CA public 인증서)를  반입(import)."
-  echo
-
-  keytool -keystore $TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME \
-    -alias CARoot -import -file $TRUSTSTORE_WORKING_DIRECTORY/ca-cert \
-    -noprompt -dname "C=$COUNTRY, ST=$STATE, L=$LOCATION, O=$OU, CN=$CN" -keypass $PASS -storepass $PASS
+keytool -keystore $TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME \
+-alias CARoot -import -file $TRUSTSTORE_WORKING_DIRECTORY/ca-cert \
+-noprompt -dname "C=$COUNTRY, ST=$STATE, L=$LOCATION, O=$OU, CN=$CN" -keypass $PASS -storepass $PASS
 ```
 
 3. kafka broker 또는 producer/consumer에서 사용할 keystore 생성
 ```
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME \
-  -alias localhost -validity $VALIDITY_IN_DAYS -genkey -keyalg RSA \
-   -noprompt -dname "C=$COUNTRY, ST=$STATE, L=$LOCATION, O=$OU, CN=$CN" -keypass $PASS -storepass $PASS
+-alias localhost -validity $VALIDITY_IN_DAYS -genkey -keyalg RSA \
+-noprompt -dname "C=$COUNTRY, ST=$STATE, L=$LOCATION, O=$OU, CN=$CN" -keypass $PASS -storepass $PASS
 ```
 4. CA root 인증서를 keystore에 반입. Alias는 CARoot
 ```
-echo "신뢰 저장소(truststore)에서 인증서 가져와서 $CA_CERT_FILE에 저장."
-echo
-
 keytool -keystore $trust_store_file -export -alias CARoot -rfc -file $CA_CERT_FILE -keypass $PASS -storepass $PASS
 ```
 
@@ -68,31 +58,31 @@ keytool -keystore $trust_store_file -export -alias CARoot -rfc -file $CA_CERT_FI
 6. 키 저장소(keystore)에 대한 인증서 서명 요청(csr) 파일 생성
 ```
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias localhost \
-  -certreq -file $KEYSTORE_SIGN_REQUEST -keypass $PASS -storepass $PASS
+-certreq -file $KEYSTORE_SIGN_REQUEST -keypass $PASS -storepass $PASS
 ```
 
 7. Root CA 인증서로 인증서에 서명
 ```
 openssl x509 -req -CA $CA_CERT_FILE -CAkey $trust_store_private_key_file \
-  -in $KEYSTORE_SIGN_REQUEST -out $KEYSTORE_SIGNED_CERT \
-  -days $VALIDITY_IN_DAYS -CAcreateserial
+-in $KEYSTORE_SIGN_REQUEST -out $KEYSTORE_SIGNED_CERT \
+-days $VALIDITY_IN_DAYS -CAcreateserial
 ```
 
 8. Root CA 인증서를 alias가 CARoot로 설정하고, 키 저장소(keystore)로 반입(import)
 ```
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias CARoot \
-  -import -file $CA_CERT_FILE -keypass $PASS -storepass $PASS -noprompt
+-import -file $CA_CERT_FILE -keypass $PASS -storepass $PASS -noprompt
 ```  
 
 9. 서명한 인증서를 다시 키 저장소로 반입(import)
 ``` 
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias localhost -import \
-  -file $KEYSTORE_SIGNED_CERT -keypass $PASS -storepass $PASS
+-file $KEYSTORE_SIGNED_CERT -keypass $PASS -storepass $PASS
 ``` 
 
 10. RootCA 개인키는 백업, 작업중 생성한 인증서 파일 삭제
 ``` 
-  rm $KEYSTORE_SIGN_REQUEST_SRL
-  rm $KEYSTORE_SIGN_REQUEST
-  rm $KEYSTORE_SIGNED_CERT
+rm $KEYSTORE_SIGN_REQUEST_SRL
+rm $KEYSTORE_SIGN_REQUEST
+rm $KEYSTORE_SIGNED_CERT
 ``` 
