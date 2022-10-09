@@ -39,13 +39,13 @@ if [ -e "$KEYSTORE_SIGNED_CERT" ]; then
 fi
 
 echo
-echo "Welcome to the Kafka SSL keystore and truststore generator script."
+echo "Kafka SSL 키 저장소(keystore) 및 신뢰 저장소(truststore) 생성 스크립트에 오신 것을 환영합니다."
 
 echo
-echo "First, do you need to generate a trust store and associated private key,"
-echo "or do you already have a trust store file and private key?"
+echo "먼저, 신뢰 저장소(truststore) 및 관련 개인 키(CA Root key)를 생성해야 합니다,"
+echo "또는 이미 신뢰 저장소 파일 및 개인 키(CA Root)가 있습니까?"
 echo
-echo -n "Do you need to generate a trust store and associated private key? [yn] "
+echo -n "신뢰 저장소(truststore) 및 관련 개인 키(CA Root key)를 생성해야 합니까?? [yn] "
 read generate_trust_store
 
 trust_store_file=""
@@ -58,14 +58,13 @@ if [ "$generate_trust_store" == "y" ]; then
 
   mkdir $TRUSTSTORE_WORKING_DIRECTORY
   echo
-  echo "OK, we'll generate a trust store and associated private key."
+  echo "Ok!, 신뢰 저장소(truststore)와 관련 개인 키(CA Root Key)를 생성하겠습니다.."
   echo
-  echo "First, the private key."
+  echo "우선, CA root key."
   echo
-  echo "You will be prompted for:"
-  echo " - A password for the private key. Remember this."
-  echo " - Information about you and your company."
-  echo " - NOTE that the Common Name (CN) is currently not important."
+  echo "프롬프트가 출력될 것입니다.:"
+  echo " - 개인 키의 암호입니다."
+  echo " - CN(일반 이름)은 현재 중요하지 않습니다."
 
   openssl req -new -x509 -keyout $TRUSTSTORE_WORKING_DIRECTORY/ca-key \
     -out $TRUSTSTORE_WORKING_DIRECTORY/$CA_CERT_FILE -days $VALIDITY_IN_DAYS
@@ -73,21 +72,21 @@ if [ "$generate_trust_store" == "y" ]; then
   trust_store_private_key_file="$TRUSTSTORE_WORKING_DIRECTORY/ca-key"
 
   echo
-  echo "Two files were created:"
-  echo " - $TRUSTSTORE_WORKING_DIRECTORY/ca-key -- the private key used later to"
-  echo "   sign certificates"
-  echo " - $TRUSTSTORE_WORKING_DIRECTORY/$CA_CERT_FILE -- the certificate that will be"
-  echo "   stored in the trust store in a moment and serve as the certificate"
-  echo "   authority (CA). Once this certificate has been stored in the trust"
-  echo "   store, it will be deleted. It can be retrieved from the trust store via:"
+  echo "2개의 파일이 생성됩니다.:"
+  echo " - $TRUSTSTORE_WORKING_DIRECTORY/ca-key -- 이 개인키는 나중에 인증서를"
+  echo "   sign하기 위해 사용합니다."
+  echo " - $TRUSTSTORE_WORKING_DIRECTORY/$CA_CERT_FILE -- 이 인증서는"
+  echo "   잠시후 신뢰저장소(truststore)에 저당되고, CA 인증서로서 역할합니다."
+  echo "   일단 이 인증서가 신뢰저장소에 저장되면, 삭제되어야 할 것입니다."
+  echo "   이것은 다음의 명령어로 조회할 수 있습니다.:"
   echo "   $ keytool -keystore <trust-store-file> -export -alias CARoot -rfc"
 
   echo
-  echo "Now the trust store will be generated from the certificate."
+  echo "이제 인증서를 신뢰 저장소에 반입(import)합니다."
   echo
-  echo "You will be prompted for:"
-  echo " - the trust store's password (labeled 'keystore'). Remember this"
-  echo " - a confirmation that you want to import the certificate"
+  echo "프롬프트가 출력되면:"
+  echo " - 신뢰저장소에 대한 비밀번호 (labeled 'keystore'). 이것은 꼭 기억해야함"
+  echo " - 인증서를 반입하기 원하는 확인 작업입니다."
 
   keytool -keystore $TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME \
     -alias CARoot -import -file $TRUSTSTORE_WORKING_DIRECTORY/$CA_CERT_FILE
@@ -95,13 +94,13 @@ if [ "$generate_trust_store" == "y" ]; then
   trust_store_file="$TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME"
 
   echo
-  echo "$TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME was created."
+  echo "$TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME 생성되었다."
 
-  # don't need the cert because it's in the trust store.
+  # 이 인증서는 신뢰저장소에 저장되었기 떄문에 local에 더이상 필요 없습니다.
   rm $TRUSTSTORE_WORKING_DIRECTORY/$CA_CERT_FILE
 else
   echo
-  echo -n "Enter the path of the trust store file. "
+  echo -n "신뢰저장소의 파일의 경로(path). "
   read -e trust_store_file
 
   if ! [ -f $trust_store_file ]; then
@@ -109,7 +108,7 @@ else
     exit 1
   fi
 
-  echo -n "Enter the path of the trust store's private key. "
+  echo -n "신뢰저장소의 private key 파일의 경로. "
   read -e trust_store_private_key_file
 
   if ! [ -f $trust_store_private_key_file ]; then
@@ -119,24 +118,25 @@ else
 fi
 
 echo
-echo "Continuing with:"
-echo " - trust store file:        $trust_store_file"
-echo " - trust store private key: $trust_store_private_key_file"
+echo "계속해서:"
+echo " - 신뢰저장소 파일:        $trust_store_file"
+echo " - 신뢰저장소의 개인키 파일: $trust_store_private_key_file"
 
 mkdir $KEYSTORE_WORKING_DIRECTORY
 
 echo
-echo "Now, a keystore will be generated. Each broker and logical client needs its own"
-echo "keystore. This script will create only one keystore. Run this script multiple"
-echo "times for multiple keystores."
+echo "지금 keystore를 생성. "
+echo "각 kafka broker 또는 클라이언트는 자신의 keystore를 필요합니다."
+echo "이 스크립트는 하나의 keystore를 생성합니다. 여러 개의 키저장소를 위해 "
+echo "이 스크립트를 여러번 반복에서 실행하십시요."
 echo
-echo "You will be prompted for the following:"
-echo " - A keystore password. Remember it."
+echo "다음의 프롬프트가 출력되면:"
+echo " - keystore의 비밀번호. 꼭 기억해라."
 echo " - Personal information, such as your name."
-echo "     NOTE: currently in Kafka, the Common Name (CN) does not need to be the FQDN of"
-echo "           this host. However, at some point, this may change. As such, make the CN"
-echo "           the FQDN. Some operating systems call the CN prompt 'first / last name'"
-echo " - A key password, for the key being generated within the keystore. Remember this."
+echo "     참고: 현재 Kafka에서는 CN(일반 이름)이 이 호스트의 FQDN일 필요가 없습니다. "
+echo "           그러나 어느 시점에서 이것은 바뀔 수 있습니다."
+echo "           일부 운영 체제는 CN 프롬프트를 '이름(firstname)/성(lastname)으로 부릅니다."
+echo " - 비밀번호, 키스토어(keystore)에 저장하기 위해. 이것은 반드시 기억해라!."
 
 # To learn more about CNs and FQDNs, read:
 # https://docs.oracle.com/javase/7/docs/api/javax/net/ssl/X509ExtendedTrustManager.html
@@ -145,59 +145,58 @@ keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME \
   -alias localhost -validity $VALIDITY_IN_DAYS -genkey -keyalg RSA
 
 echo
-echo "'$KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME' now contains a key pair and a"
-echo "self-signed certificate. Again, this keystore can only be used for one broker or"
-echo "one logical client. Other brokers or clients need to generate their own keystores."
+echo "'$KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME' 키 패어와"
+echo "self-signed 인증서를 포함합니다. 다시 말해 이 인증서는 하나의 kafka broker에 의해 사용되거나"
+echo "하나의 클라이언트에서 사용됩니다. 다른 kafka broker나 클라이언트는 자신의 키저장소를 생성 해야합니다."
 
 echo
-echo "Fetching the certificate from the trust store and storing in $CA_CERT_FILE."
+echo "신뢰저장소에서 인증서를 반출해서 $CA_CERT_FILE로 저장합니다."
 echo
-echo "You will be prompted for the trust store's password (labeled 'keystore')"
+echo "신뢰 저장소에 대한 비밀번호 프롬프트가 표시될 것입니다. (labeled 'keystore')"
 
 keytool -keystore $trust_store_file -export -alias CARoot -rfc -file $CA_CERT_FILE
 
 echo
-echo "Now a certificate signing request will be made to the keystore."
+echo "이제 인증서 요청파일이 만들어 질 것입니다."
 echo
-echo "You will be prompted for the keystore's password."
+echo "키저장소의 비밀번호 프롬프트가 표시될 것입니다."
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias localhost \
   -certreq -file $KEYSTORE_SIGN_REQUEST
 
 echo
-echo "Now the trust store's private key (CA) will sign the keystore's certificate."
+echo "지금 CA Root key와 인증서로 kafka broker 또는 클라이언트에서 사용할 인증서를 sign합니다."
 echo
-echo "You will be prompted for the trust store's private key password."
+echo "CA root Key에 대한 비밀번호 프롬프트가 나타날 것입니다."
 openssl x509 -req -CA $CA_CERT_FILE -CAkey $trust_store_private_key_file \
   -in $KEYSTORE_SIGN_REQUEST -out $KEYSTORE_SIGNED_CERT \
   -days $VALIDITY_IN_DAYS -CAcreateserial
-# creates $KEYSTORE_SIGN_REQUEST_SRL which is never used or needed.
+# 생성한 $KEYSTORE_SIGN_REQUEST_SRL은 더이상 사용되지 않습니다.
 
 echo
-echo "Now the CA will be imported into the keystore."
+echo "지금 CA 인증서가 keystore에 반입될 것입니다."
 echo
-echo "You will be prompted for the keystore's password and a confirmation that you want to"
-echo "import the certificate."
+echo "키저장소의 비밀번호 프롬프트가 표시될 것이며, import하기 원하는지 다시 확인 프롬프트가 표시될 것입니다."
+echo
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias CARoot \
   -import -file $CA_CERT_FILE
-rm $CA_CERT_FILE # delete the trust store cert because it's stored in the trust store.
+rm $CA_CERT_FILE # 이 인증서는 신뢰저장소(truststore)에 저장되어 있기 때문에 삭제합니다.
 
 echo
-echo "Now the keystore's signed certificate will be imported back into the keystore."
+echo "CA Root 인증서는 키저장소(keystore)에 반입되었습니다."
 echo
-echo "You will be prompted for the keystore's password."
+echo "키저장소의 비밀번호 프롬프트."
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias localhost -import \
   -file $KEYSTORE_SIGNED_CERT
 
 echo
-echo "All done!"
+echo "모두 완료!"
 echo
-echo "Delete intermediate files? They are:"
+echo "중간 작업파일들을 삭제? 삭제 파일은:"
 echo " - '$KEYSTORE_SIGN_REQUEST_SRL': CA serial number"
-echo " - '$KEYSTORE_SIGN_REQUEST': the keystore's certificate signing request"
-echo "   (that was fulfilled)"
-echo " - '$KEYSTORE_SIGNED_CERT': the keystore's certificate, signed by the CA, and stored back"
-echo "    into the keystore"
-echo -n "Delete? [yn] "
+echo " - '$KEYSTORE_SIGN_REQUEST': 키저장소의 CSR 파일"
+echo " - '$KEYSTORE_SIGNED_CERT': 키저장소의 인증서, CA에 sign하고 keystore에 반입한 것"
+echo 
+echo -n "삭제? [yn] "
 read delete_intermediate_files
 
 if [ "$delete_intermediate_files" == "y" ]; then
