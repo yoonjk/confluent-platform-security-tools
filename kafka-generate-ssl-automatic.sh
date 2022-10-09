@@ -56,9 +56,9 @@ trust_store_private_key_file=""
 
   mkdir $TRUSTSTORE_WORKING_DIRECTORY
   echo
-  echo "OK, trust store 생성하고, 개인키 생성."
+  echo "OK, trust store 생성하고, root CA 개인키/공개키 생성."
   echo
-  echo "첫번째 개인키(private) 생성."
+  echo "첫번째 개인키(private)/공개키(pub) 생성."
   echo
 
   openssl req -new -x509 -keyout $TRUSTSTORE_WORKING_DIRECTORY/ca-key \
