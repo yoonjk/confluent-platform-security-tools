@@ -77,7 +77,7 @@ trust_store_private_key_file=""
   echo "   $ keytool -keystore <trust-store-file> -export -alias CARoot -rfc"
 
   echo
-  echo "이제 인증서(CA public 인증서)에서 truststore가 생성됩니다."
+  echo "이제 truststore를 생성하고, 인증서(CA public 인증서)를  반입(import) 됩니다."
   echo
 
   keytool -keystore $TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME \
@@ -100,7 +100,8 @@ echo " - trust store 개인키: $trust_store_private_key_file"
 mkdir $KEYSTORE_WORKING_DIRECTORY
 
 echo
-echo "이제 키 저장소가 생성됩니다. 각 브로커와 클라이언트는 자신의 keystore를 가질 필요가 있습니다."
+echo "이제 키 저장소가 생성됩니다. "
+echo "각 브로커와 클라이언트는 자신의 keystore를 가질 필요가 있습니다."
 echo "keystore. 이 스크립트는 하나의 keystore만을 생성하는 스크립트입니다. 여러개의 keystore를 위해 
 echo "스크립트를 반복해서 실행하세요"."
 echo
@@ -158,7 +159,7 @@ keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias localhos
 echo
 echo "모두 완료!"
 echo
-echo "작업중 생성한 파일을 삭제합니다. 그들은:"
+echo "작업중 생성한 파일을 삭제합니다. 그것들은:"
 echo " - '$KEYSTORE_SIGN_REQUEST_SRL': CA serial number"
 echo " - '$KEYSTORE_SIGN_REQUEST': 키 저장소의 인증서 서명 요청"
 echo "   (that was fulfilled)"
