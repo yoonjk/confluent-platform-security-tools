@@ -52,3 +52,10 @@ keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME \
   -alias localhost -validity $VALIDITY_IN_DAYS -genkey -keyalg RSA \
    -noprompt -dname "C=$COUNTRY, ST=$STATE, L=$LOCATION, O=$OU, CN=$CN" -keypass $PASS -storepass $PASS
 ```
+3. CA root 인증서를 keystore에 반입. Alias는 CARoot
+```
+echo "신뢰 저장소(truststore)에서 인증서 가져와서 $CA_CERT_FILE에 저장."
+echo
+
+keytool -keystore $trust_store_file -export -alias CARoot -rfc -file $CA_CERT_FILE -keypass $PASS -storepass $PASS
+```
