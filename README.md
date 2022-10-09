@@ -37,6 +37,8 @@ openssl req -new -x509 -keyout $TRUSTSTORE_WORKING_DIRECTORY/ca-key \
 스크립트에서 필요한 환경변수를 설정하고
 아래 2~10까지를 각 서버의 작업폴더에서 실행합니다.
 
+참조 : https://github.com/yoonjk/cp-docker-images/blob/5.1.0-post/examples/kafka-cluster-ssl/secrets/create-certs.sh
+
 ```
 keytool -keystore $TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME \
 -alias CARoot -import -file $TRUSTSTORE_WORKING_DIRECTORY/ca-cert \
