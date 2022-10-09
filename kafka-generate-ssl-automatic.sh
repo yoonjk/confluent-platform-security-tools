@@ -72,7 +72,7 @@ trust_store_private_key_file=""
   echo " - $TRUSTSTORE_WORKING_DIRECTORY/ca-key -- 나중에 인증서에 서명하는 데 사용되는 개인키"
   echo " - $TRUSTSTORE_WORKING_DIRECTORY/ca-cert -- 이 인증서는 "
   echo "   truststore 에 저장되고 CA 인증서로서 역할을 합니다"
-  echo "   일단 이 인증서가 truststore 에 저장되면, 현재 디렉토리에서는 삭제되어야 됩니다(보안상)"
+  echo "   일단 이 인증서가 truststore 에 저장되면, 현재 디렉토리에 있는 인증서는 백업 후 삭제되어야 됩니다(보안상)"
   echo "   그것은 다음에 의해 truststore에서 조회할 수 있습니다:"
   echo "   $ keytool -keystore <trust-store-file> -export -alias CARoot -rfc"
 
