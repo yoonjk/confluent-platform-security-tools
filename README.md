@@ -46,3 +46,9 @@ bash ./kafka-generate-ssl-automatic.sh
     -noprompt -dname "C=$COUNTRY, ST=$STATE, L=$LOCATION, O=$OU, CN=$CN" -keypass $PASS -storepass $PASS
 ```
 
+3. kafka broker 또는 producer/consumer에서 사용할 keystore 생성
+```
+keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME \
+  -alias localhost -validity $VALIDITY_IN_DAYS -genkey -keyalg RSA \
+   -noprompt -dname "C=$COUNTRY, ST=$STATE, L=$LOCATION, O=$OU, CN=$CN" -keypass $PASS -storepass $PASS
+```
