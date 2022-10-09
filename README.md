@@ -39,12 +39,14 @@ openssl req -new -x509 -keyout $TRUSTSTORE_WORKING_DIRECTORY/ca-key \
 
 참조 : https://github.com/yoonjk/cp-docker-images/blob/5.1.0-post/examples/kafka-cluster-ssl/secrets/create-certs.sh
 
+alias localhost는 적합한 이름으로 변경하세요. 예를들면 kafka1 또는 client1
 ```
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME \
 -alias localhost -validity $VALIDITY_IN_DAYS -genkey -keyalg RSA
 ```
 
 3. 키 저장소(keystore)에 대한 인증서 서명 요청(csr) 파일 생성
+alias localhost는 적합한 이름으로 변경하세요. 예를들면 kafka1 또는 client1
 ```
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias localhost \
 -certreq -file $KEYSTORE_SIGN_REQUEST -keypass $PASS -storepass $PASS
@@ -64,6 +66,7 @@ keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias CARoot \
 ```  
 
 6. 서명한 인증서를 다시 키 저장소로 반입(import)
+alias localhost는 적합한 이름으로 변경하세요. 예를들면 kafka1 또는 client1
 ``` 
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias localhost -import \
 -file $KEYSTORE_SIGNED_CERT -keypass $PASS -storepass $PASS
