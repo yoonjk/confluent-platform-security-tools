@@ -24,21 +24,14 @@ export CITY=Chicago
 export PASSWORD=secret
 bash ./kafka-generate-ssl-automatic.sh
 ```
+1. CA 인증서 생성
 ```
-KEYSTORE_FILENAME="kafka.keystore.jks"
-VALIDITY_IN_DAYS=3650
-DEFAULT_TRUSTSTORE_FILENAME="kafka.truststore.jks"
-TRUSTSTORE_WORKING_DIRECTORY="truststore"
-KEYSTORE_WORKING_DIRECTORY="keystore"
-CA_CERT_FILE="ca-cert"
-KEYSTORE_SIGN_REQUEST="cert-file"
-KEYSTORE_SIGN_REQUEST_SRL="ca-cert.srl"
-KEYSTORE_SIGNED_CERT="cert-signed"
+  echo "OK, trust store 생성하고, root CA 개인키/공개키 생성."
+  echo
+  echo "첫번째 개인키(private)/공개키(pub) 생성."
+  echo
 
-COUNTRY=$COUNTRY
-STATE=$STATE
-OU=$ORGANIZATION_UNIT
-CN=`hostname -f`
-LOCATION=$CITY
-PASS=$PASSWORD
+  openssl req -new -x509 -keyout $TRUSTSTORE_WORKING_DIRECTORY/ca-key \
+    -out $TRUSTSTORE_WORKING_DIRECTORY/ca-cert -days $VALIDITY_IN_DAYS -nodes \
+    -subj "/C=$COUNTRY/ST=$STATE/L=$LOCATION/O=$OU/CN=$CN"
 ```
