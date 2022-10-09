@@ -35,58 +35,48 @@ openssl req -new -x509 -keyout $TRUSTSTORE_WORKING_DIRECTORY/ca-key \
 2. CA 인증서를 truststore에 반입 
 1번에서 생성한 Root CA 인증서(한번만 수행)를 각 서버의 작업폴더에 복사하고,
 스크립트에서 필요한 환경변수를 설정하고
-아래 2~10까지를 각 서버의 작업폴더에서 실행합니다.
+아래 2~7까지를 각 서버의 작업폴더에서 실행합니다.
 
 참조 : https://github.com/yoonjk/cp-docker-images/blob/5.1.0-post/examples/kafka-cluster-ssl/secrets/create-certs.sh
 
 ```
-keytool -keystore $TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME \
--alias CARoot -import -file $TRUSTSTORE_WORKING_DIRECTORY/ca-cert \
--noprompt -dname "C=$COUNTRY, ST=$STATE, L=$LOCATION, O=$OU, CN=$CN" -keypass $PASS -storepass $PASS
-```
-
-3. kafka broker 또는 producer/consumer에서 사용할 keystore 생성
-```
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME \
--alias localhost -validity $VALIDITY_IN_DAYS -genkey -keyalg RSA \
--noprompt -dname "C=$COUNTRY, ST=$STATE, L=$LOCATION, O=$OU, CN=$CN" -keypass $PASS -storepass $PASS
-```
-4. CA root 인증서를 keystore에 반입. Alias는 CARoot
-```
-keytool -keystore $trust_store_file -export -alias CARoot -rfc -file $CA_CERT_FILE -keypass $PASS -storepass $PASS
+-alias localhost -validity $VALIDITY_IN_DAYS -genkey -keyalg RSA
 ```
 
-5. 신뢰 저장소(truststore)에서 인증서 가져와서 $CA_CERT_FILE에 저장
-```
-keytool -keystore $trust_store_file -export -alias CARoot -rfc -file $CA_CERT_FILE -keypass $PASS -storepass $PASS
-```
-
-6. 키 저장소(keystore)에 대한 인증서 서명 요청(csr) 파일 생성
+3. 키 저장소(keystore)에 대한 인증서 서명 요청(csr) 파일 생성
 ```
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias localhost \
 -certreq -file $KEYSTORE_SIGN_REQUEST -keypass $PASS -storepass $PASS
 ```
 
-7. Root CA 인증서로 인증서에 서명
+4. Root CA 인증서로 인증서에 서명
 ```
 openssl x509 -req -CA $CA_CERT_FILE -CAkey $trust_store_private_key_file \
 -in $KEYSTORE_SIGN_REQUEST -out $KEYSTORE_SIGNED_CERT \
 -days $VALIDITY_IN_DAYS -CAcreateserial
 ```
 
-8. Root CA 인증서를 alias가 CARoot로 설정하고, 키 저장소(keystore)로 반입(import)
+5. Root CA 인증서를 alias가 CARoot로 설정하고, 키 저장소(keystore)로 반입(import)
 ```
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias CARoot \
--import -file $CA_CERT_FILE -keypass $PASS -storepass $PASS -noprompt
+-import -file $CA_CERT_FILE
 ```  
 
-9. 서명한 인증서를 다시 키 저장소로 반입(import)
+6. 서명한 인증서를 다시 키 저장소로 반입(import)
 ``` 
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias localhost -import \
 -file $KEYSTORE_SIGNED_CERT -keypass $PASS -storepass $PASS
 ``` 
 
-10. RootCA 개인키는 백업, 작업중 생성한 인증서 파일 삭제
+7. CA root 인증서를 truststore에 반입. Alias는 CARoot
+```
+# Create truststore and import the CA cert.
+keytool -keystore $TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME \
+-alias CARoot -import -file $TRUSTSTORE_WORKING_DIRECTORY/$CA_CERT_FILE
+```
+
+8. RootCA 개인키는 백업, 작업중 생성한 인증서 파일 삭제
 ``` 
 rm $KEYSTORE_SIGN_REQUEST_SRL
 rm $KEYSTORE_SIGN_REQUEST
