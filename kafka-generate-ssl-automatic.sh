@@ -77,7 +77,7 @@ trust_store_private_key_file=""
   echo "   $ keytool -keystore <trust-store-file> -export -alias CARoot -rfc"
 
   echo
-  echo "이제 truststore를 생성하고, 인증서(CA public 인증서)를  반입(import) 됩니다."
+  echo "이제 truststore를 생성하고, 인증서(CA public 인증서)를  반입(import)."
   echo
 
   keytool -keystore $TRUSTSTORE_WORKING_DIRECTORY/$DEFAULT_TRUSTSTORE_FILENAME \
@@ -143,12 +143,12 @@ openssl x509 -req -CA $CA_CERT_FILE -CAkey $trust_store_private_key_file \
 # 위에서 생성한 $KEYSTORE_SIGN_REQUEST_SRL 은 더이상 필요하거나 사용되지 않습니다.
 
 echo
-echo "이제 CA를 키 저장소(keystore)로 반입(import)될 것입니다."
+echo "이제 CA를 키 저장소(keystore)로 반입(import)합니다."
 echo
 keytool -keystore $KEYSTORE_WORKING_DIRECTORY/$KEYSTORE_FILENAME -alias CARoot \
   -import -file $CA_CERT_FILE -keypass $PASS -storepass $PASS -noprompt
   
-rm $CA_CERT_FILE # 신뢰 저장소에 저장되어 있으므로 local에 있는 신뢰 저장소 인증서를 삭제하십시오.
+rm $CA_CERT_FILE # 신뢰 저장소에 저장되어 있으므로 local에 있는 $CA_CERT_FILE 인증서를 삭제하십시오.
 
 echo
 echo "이제 키 저장소의 서명된 인증서를 다시 키 저장소로 반입(import)합니다."
